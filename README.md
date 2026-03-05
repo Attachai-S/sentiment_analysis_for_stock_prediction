@@ -37,7 +37,14 @@ Pre-trained models are used to generate sentiment scores for each article, which
 
 ### 4. Stock price collection 
 
-Retrieve historical stock price data from free sources such as Yahoo Finance to integrate with sentiment analysis results.
+Retrieve historical stock price data from free sources such as Yahoo Finance to integrate with sentiment analysis results. All stock symbols used in this project are from the technology sector:
+
+    - AAPL : Apple Corp.
+    - CSCO : Cisco Systems, Inc. Common Stock. (DE)
+    - INTC : Intel Corp.
+    - MSFT : Microsoft Corp.
+    - NVDA : Nvidia Corp.
+    - ORCL : Oracle Corp.
 
 ---
 
@@ -56,3 +63,9 @@ Train classification models using prepared features to predict stock price movem
  ### 7. Evaluation 
 
 Evaluate model performance using metrics such as accuracy, precision, recall, and F1-score. Validate results on test datasets and compare against baseline models to assess prediction effectiveness.
+
+---
+
+### library for import 
+ - pip install requests
+ - pip install pandas
