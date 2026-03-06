@@ -23,8 +23,7 @@ This project is developed for CP465 Text Mining at Srinakharinwirot University (
 
 to get News article and their content we use 2 method as 
  
- - **1.1 API**    : use API from free source (NewsAPI etc.)
- 
+ - **1.1 API**    : we use gunnhub API to get data with stock symbol all data we get is ***ticker, published_at, headline, summary, source, url***
  - **1.2 Web scrapping** : develop source code for scapping content from authorize website (GoogleNews etc.) 
 
 ---
@@ -66,6 +65,7 @@ Evaluate model performance using metrics such as accuracy, precision, recall, an
 
 ---
 
-### library for import 
- - pip install requests
- - pip install pandas
+### library for import (for co-worker)
+ - pip install requests : use for news api 
+ - pip install pandas : use for pre-view data
+ - pip install python-dotenv : use for keep api

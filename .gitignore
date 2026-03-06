@@ -1,0 +1,27 @@
+# environment variables
+.env
+
+# python cache
+__pycache__/
+*.pyc
+
+# virtual environment
+venv/
+.env/
+
+# vscode
+.vscode/
+
+# dataset
+*.csv
+*.xlsx
+
+# macOS
+.DS_Store
+
+# logs
+*.log
+
+# prevent all dataset 
+news_collection/*.csv
+stock_collection/*.csv
