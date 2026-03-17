@@ -1,4 +1,4 @@
-### This repository is for education purposes only!!!
+### This repository is for education purposes only
 
 ### Project pipline or project implement
 
@@ -19,12 +19,18 @@ This project is developed for CP465 Text Mining at Srinakharinwirot University (
 
 ---
 
-### 1. New colletion
+### 1. News collection
 
 to get News article and their content we use 2 method as 
  
  - **1.1 API**    : we use gunnhub API to get data with stock symbol all data we get is ***ticker, published_at, headline, summary, source, url***
  - **1.2 Web scrapping** : develop source code for scapping content from authorize website (GoogleNews etc.) 
+
+---
+
+### 2. Text Processing 
+
+Text processing is performed to clean and preprocess raw news article data prior to sentiment scoring. This step includes tasks such as removing irrelevant characters, normalizing text, tokenization, and eliminating stop words to ensure the data is suitable for subsequent analysis.  
 
 ---
 
@@ -65,7 +71,7 @@ Evaluate model performance using metrics such as accuracy, precision, recall, an
 
 ---
 
-### library for import (for co-worker)
+### Imported library (for co-worker)
  - pip install requests : use for news api 
  - pip install pandas : use for pre-view data
  - pip install python-dotenv : use for keep api

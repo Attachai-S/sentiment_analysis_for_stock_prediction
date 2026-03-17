@@ -1,0 +1,3 @@
+#import get_data pipline
+from news_collection.get_news_data import get_news_dataset
+from news_collection.text_processing import single_clean, check_data
