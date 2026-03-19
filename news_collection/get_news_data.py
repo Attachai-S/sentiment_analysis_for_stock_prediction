@@ -7,7 +7,6 @@ from datetime import date, timedelta
 
 load_dotenv()
 API_KEY = os.getenv("FINNHUB_API_KEY") 
-
 BASE_URL = "https://finnhub.io/api/v1/company-news"
 SYMBOLS = ["AAPL", "CSCO", "INTC", "MSFT", "NVDA","ORCL"]
 
@@ -75,8 +74,9 @@ def start_get_news_data(symbol):
     df = df.drop_duplicates(subset="url")
     df = df.sort_values("published_at")
     
-
-    df.to_csv(f"news_collection/news_dataset/news_{symbol}.csv", index=False)
+    # df.to_csv(r"\news_collection\news_dataset\news_{symbol}.csv}", index=False)
+    # df.to_csv(f"/news_dataset/news_{symbol}.csv", index=False)
+    df.to_csv(f"../news_collection/news_dataset/news_{symbol}.csv", index=False)
 
     print("saved:", symbol, len(df), "rows")
 
@@ -86,7 +86,7 @@ def get_news_dataset() :
         if symbol != SYMBOLS[-1]:
             print(f"Finished {symbol}, sleeping for {SYMBOL_SLEEP} seconds...")
             time.sleep(SYMBOL_SLEEP)
-            print(f"Starting next ({symbol}) symbol...")
+            print(f"Starting next \"{symbol}\" symbol...")
         else:
             print("All symbols processed.")
 
