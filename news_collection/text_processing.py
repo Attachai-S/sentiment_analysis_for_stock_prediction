@@ -10,10 +10,12 @@ def selected_path(symbol,task="read", user_type="personal"):
     read_personal_path = f"news_collection/news_dataset/news_{symbol}.csv"
     write_personal_path = f"news_collection/news_processed/news_{symbol}_cleaned.csv"
     check_personal_path = f"news_collection/news_processed/news_{symbol}_cleaned.csv"
+    sentiment_personal_path = f"news_collection/news_sentiment/news_{symbol}_sentiment.csv"
     # clone_df.to_csv(f"news_collection/news_processed/news_{symbol}_cleaned.csv", index=False)
     read_university_path = f"../news_collection/news_dataset/news_{symbol}.csv"
     write_university_path = f"../news_collection/news_processed/news_{symbol}_cleaned.csv"
     check_university_path = f"../news_collection/news_processed/news_{symbol}_cleaned.csv"
+    sentiment_university_path = f"../news_collection/news_sentiment/news_{symbol}_sentiment.csv"
     try:
         if task == "read":
             if user_type == "personal":
@@ -32,10 +34,14 @@ def selected_path(symbol,task="read", user_type="personal"):
                 return check_personal_path
             elif user_type == "university":
                 return check_university_path
+        elif task == "sentiment":
+            if user_type == "personal":
+                return sentiment_personal_path
+            elif user_type == "university":
+                return sentiment_university_path
     except Exception as e:
         print(f"An error occurred while determining the file path: {e}")
         return None
-
 
 def line(option="none",symbol=""):
     if option == "start":
@@ -61,9 +67,9 @@ def check_data(symbol):
         empty_indices = empty_rows.index.tolist()
         print(f"Row Index : {empty_indices}")
         
-        # แสดงตัวอย่างข้อมูล
+        # show sample of row(s) of empty string data
         print("\n--- sample empty String data ---")
-        print(empty_rows[['symbol', 'published_at', 'headline', 'summary']].head()) # sample of row(s) of empty string data
+        print(empty_rows[['symbol', 'published_at', 'headline', 'summary']].head())
     line("end_check", symbol)
 
 def fill_null(symbol):
@@ -115,17 +121,17 @@ def prepare_final_data(symbol):
         _df = pd.read_csv(selected_path(symbol, "write", "personal"))
         _clone_df = _df.copy() #copy for checking null values without affecting original data
         print(f"\nStart cleansing noise data of \"{symbol}\" ...")
-        _clone_df['headline'] = _clone_df['headline'].apply(cleansing_noise)
-        _clone_df['summary'] = _clone_df['summary'].apply(cleansing_noise)
+        _clone_df['headline_clean'] = _clone_df['headline'].apply(cleansing_noise)
+        _clone_df['summary_clean'] = _clone_df['summary'].apply(cleansing_noise)
         _clone_df['model_text'] = _clone_df.apply(
             
-            lambda row: f"{row['headline']} {row['summary']}"
+            lambda row: f"{row['headline_clean']} {row['summary_clean']}"
             if row['summary_clean'] != "" else row['headline_clean'],
             axis=1
         )
         _clone_df['model_text'] = _clone_df['model_text'].apply(lambda x: x.replace('..', '.'))
-        _clone_df = _clone_df[["symbol", "published_at", "model_text"]]
-        _clone_df.to_csv(selected_path(symbol, "write", "personal"), index=False)
+        _clone_df = _clone_df[["ticker", "published_at", "model_text"]]
+        _clone_df.to_csv(selected_path(symbol, "sentiment", "personal"), index=False)
         print(f"Finished cleansing noise data of \"{symbol}\" and saved to csv file")
     except FileNotFoundError:
         print(f"File for {symbol} not found. Skipping.")
@@ -137,7 +143,7 @@ def clean_news_data():
         try :
             fill_null(symbol)
             check_data(symbol)
-            # prepare_final_data(symbol)
+            prepare_final_data(symbol)
         except FileNotFoundError:
             print(f"File for {symbol} not found. Skipping.")
             line()
