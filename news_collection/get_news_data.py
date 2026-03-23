@@ -14,6 +14,21 @@ REQUEST_SLEEP = 1.2 # พักทุก request
 SYMBOL_SLEEP = 72 # พักหลังจบ 1 symbol = 1.20 นาที
 MAX_RETRIES = 5 # จำนวนครั้ง retry เมื่อเจอ 429
 
+USER_TYPE = "personal" # or "university"
+def selected_path(symbol, user_type="personal"):
+    # personal path
+    write_personal_path = f"news_collection/news_dataset/news_{symbol}.csv"
+    # university path
+    write_university_path = f"../news_collection/news_dataset/news_{symbol}.csv"
+    try:
+        if user_type == "personal":
+            return write_personal_path
+        elif user_type == "university":
+            return write_university_path
+    except Exception as e:
+        print(f"An error occurred while determining the file path: {e}")
+        return None
+
 def fetch_news_with_retry(params):
     for attempt in range(MAX_RETRIES):
         response = requests.get(BASE_URL, params=params, timeout=30)
@@ -74,9 +89,7 @@ def start_get_news_data(symbol):
     df = df.drop_duplicates(subset="url")
     df = df.sort_values("published_at")
     
-    # df.to_csv(r"\news_collection\news_dataset\news_{symbol}.csv}", index=False)
-    # df.to_csv(f"/news_dataset/news_{symbol}.csv", index=False)
-    df.to_csv(f"../news_collection/news_dataset/news_{symbol}.csv", index=False)
+    df.to_csv(selected_path(symbol, USER_TYPE), index=False)
 
     print("saved:", symbol, len(df), "rows")
 
