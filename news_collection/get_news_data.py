@@ -89,8 +89,7 @@ def start_get_news_data(symbol):
     df = df.drop_duplicates(subset="url")
     df = df.sort_values("published_at")
     
-    df.to_csv(selected_path(symbol, USER_TYPE), index=False)
-
+    df.to_csv(selected_path(symbol, USER_TYPE), index=False, encoding='utf-8')
     print("saved:", symbol, len(df), "rows")
 
 def get_news_dataset() : 
