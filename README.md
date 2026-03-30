@@ -75,3 +75,4 @@ Evaluate model performance using metrics such as accuracy, precision, recall, an
  - pip install requests : use for news api 
  - pip install pandas : use for pre-view data
  - pip install python-dotenv : use for keep api
+ - pip install transformers torch pandas
