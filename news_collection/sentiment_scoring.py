@@ -6,9 +6,9 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import os
 
 USERTYPE = "personal" # or "university"
-# SYMBOLS = ["AAPL", "CSCO", "INTC", "MSFT", "NVDA", "ORCL"]
+SYMBOLS = ["AAPL", "CSCO", "INTC", "MSFT", "NVDA", "ORCL"]
 # SYMBOLS = ["AAPL"] # for testing
-SYMBOLS = ["CSCO", "INTC", "MSFT", "NVDA", "ORCL"]
+# SYMBOLS = ["MSFT", "NVDA", "ORCL"]
 
 def selected_path(symbol, task="read", user_type="personal"):
     read_personal_path = f"news_collection/news_sentiment/sentiment_data/{symbol}_matching_fixed.csv"
@@ -107,8 +107,8 @@ def sentiment_scoring(symbol):
         _clone_df['negative_score'] = neg_scores
         _clone_df['neutral_score'] = neu_scores
         
-        # ตรวจสอบและสร้างโฟลเดอร์สำหรับเซฟไฟล์ (ถ้ายังไม่มี)
-        write_path = selected_path(symbol, "write", USERTYPE)
+        # if path not ex
+        write_path = selected_path(symbol, "write", USERTYPE) 
         os.makedirs(os.path.dirname(write_path), exist_ok=True)
         
         # save to csv

@@ -142,16 +142,12 @@ def encoding_mismatch(symbol):
     except Exception as e:
         print(f"from def Encoding_Mismatch: An error occurred while checking encoding mismatch: {e}")
 
-def prepare_final_data(symbol):
-    pass
-
 def pipline():
     for symbol in SYMBOLS:
         try :
             fill_null(symbol)
             cleansing_noise_text(symbol)
             encoding_mismatch(symbol)
-            prepare_final_data(symbol)
         except Exception as e:
             print(f"From def pipline: An error occurred while processing {symbol}: {e}")
             line()
