@@ -1,6 +1,4 @@
 import os
-import time
-import requests
 import pandas as pd
 from datetime import datetime
 from dotenv import load_dotenv
@@ -9,13 +7,10 @@ import yfinance as yf
 # SYMBOLS = ["AAPL","MSFT"] #for testing
 SYMBOLS = ["AAPL", "CSCO", "INTC", "MSFT", "NVDA","ORCL"]
 USER_TYPE = "personal" # or "university"
-START_DATE = "2025-01-01"
-END_DATE = datetime.now().strftime("%Y-%m-%d")
-
 
 load_dotenv()
 API_KEY = os.getenv("FINNHUB_API_KEY") 
-START_DATE = "2025-01-01"
+START_DATE = "2026-04-01"
 END_DATE = datetime.now().strftime("%Y-%m-%d")
 RESOLUTION = "D" # D = daily, W = weekly, M = monthly
 
@@ -56,5 +51,9 @@ def get_stock_data(symbol):
 
     line("end", symbol)
 
-for symbol in SYMBOLS:
+def get_stock_dataset(symbol):
     get_stock_data(symbol)
+
+def auto_pipline_get_stock_dataset(symbol):
+    get_stock_dataset(symbol)
+    return True

@@ -8,26 +8,21 @@ from datetime import date, timedelta
 load_dotenv()
 API_KEY = os.getenv("FINNHUB_API_KEY") 
 BASE_URL = "https://finnhub.io/api/v1/company-news"
-SYMBOLS = ["AAPL", "CSCO", "INTC", "MSFT", "NVDA","ORCL"]
+# SYMBOLS = ["AAPL", "CSCO", "INTC", "MSFT", "NVDA","ORCL"]
+SYMBOLS = ["ATTCH"]
 
 REQUEST_SLEEP = 1.2 # พักทุก request
-SYMBOL_SLEEP = 72 # พักหลังจบ 1 symbol = 1.20 นาที
+SYMBOL_SLEEP = 60 # พักหลังจบ 1 symbol = 1.00 นาที
 MAX_RETRIES = 5 # จำนวนครั้ง retry เมื่อเจอ 429
 
 USER_TYPE = "personal" # or "university"
 def selected_path(symbol, user_type="personal"):
-    # personal path
     write_personal_path = f"news_collection/news_dataset/news_{symbol}.csv"
-    # university path
     write_university_path = f"../news_collection/news_dataset/news_{symbol}.csv"
-    try:
-        if user_type == "personal":
-            return write_personal_path
-        elif user_type == "university":
-            return write_university_path
-    except Exception as e:
-        print(f"An error occurred while determining the file path: {e}")
-        return None
+    
+    if user_type == "personal": return write_personal_path
+    elif user_type == "university": return write_university_path
+
 
 def fetch_news_with_retry(params):
     for attempt in range(MAX_RETRIES):
@@ -45,7 +40,7 @@ def fetch_news_with_retry(params):
     raise Exception("Failed after retries because of rate limit.")
 
 def start_get_news_data(symbol):
-    start_date = date(2025, 1, 1)
+    start_date = date(2026, 4, 1)# year, month, day
     end_date = date.today()
     window_days = 7
 
@@ -102,4 +97,28 @@ def get_news_dataset() :
         else:
             print("All symbols processed.")
 
-get_news_dataset()
+# get_news_dataset()
+if __name__ == "__main__":
+    get_news_dataset()
+    
+def auto_pipline_get_news_dataset(symbol):
+    print(f"\n🚀 [PIPELINE] Start get news data : {symbol}")
+    try:
+        # 1. เรียกใช้ฟังก์ชันเดิมของคุณที่ทำหน้าที่ดึงข่าวของ 1 หุ้น
+        start_get_news_data(symbol)
+        
+        # 2. ตรวจสอบความสำเร็จ (เช็คว่าไฟล์ถูกสร้างขึ้นมาจริงๆ หรือไม่)
+        # ใช้ฟังก์ชัน selected_path ที่มีอยู่ในไฟล์นี้อยู่แล้วเพื่อดึง path ของไฟล์
+        file_path = selected_path(symbol, USER_TYPE)
+        
+        if os.path.exists(file_path):
+            print(f"✅ [PIPELINE] สำเร็จ! บันทึกไฟล์เรียบร้อย: {file_path}")
+            return True
+        else:
+            print(f"⚠️ [PIPELINE] ดึงข้อมูลเสร็จสิ้น แต่ไม่พบไฟล์ (อาจไม่มีข่าวในช่วงเวลานี้)")
+            return False 
+            
+    except Exception as e:
+        # หาก API ล่ม หรือเน็ตหลุด จะถูกจับ Error ตรงนี้ โปรแกรมจะได้ไม่เด้งปิด
+        print(f"❌ [PIPELINE] เกิดข้อผิดพลาดในการดึงข่าว {symbol}: {e}")
+        return False

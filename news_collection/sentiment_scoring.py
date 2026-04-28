@@ -7,25 +7,19 @@ import os
 
 USERTYPE = "personal" # or "university"
 SYMBOLS = ["AAPL", "CSCO", "INTC", "MSFT", "NVDA", "ORCL"]
-# SYMBOLS = ["AAPL"] # for testing
-# SYMBOLS = ["MSFT", "NVDA", "ORCL"]
 
 def selected_path(symbol, task="read", user_type="personal"):
     read_personal_path = f"news_collection/news_sentiment/sentiment_data/{symbol}_matching_fixed.csv"
     write_personal_path = f"news_collection/scored_data/{symbol}_scored.csv"
-    #C:\Users\vangu\Desktop\CP465\news_collection\news_sentiment\sentiment_data\AAPL_matching_fixed.csv
+   
     read_university_path = f"../news_collection/news_sentiment/sentiment_data/{symbol}_matching_fixed.csv"
     write_university_path = f"../news_collection/scored_data/{symbol}_scored.csv"
     if task == "read":
-        if user_type == "personal":
-            return read_personal_path
-        elif user_type == "university":
-            return read_university_path
+        if user_type == "personal": return read_personal_path
+        elif user_type == "university": return read_university_path
     elif task == "write":
-        if user_type == "personal":
-            return write_personal_path
-        elif user_type == "university":
-            return write_university_path
+        if user_type == "personal": return write_personal_path
+        elif user_type == "university": return write_university_path
     else:
         print(f"Invalid task: {task}")
         return None
@@ -47,11 +41,11 @@ def load_model():
     MODEL_NAME = "ProsusAI/finbert"
     try:
         if is_model_loaded(MODEL_NAME):
-            print("✅ model FinBERT downloaded previously, loading from local files...")
+            print("model FinBERT downloaded previously, loading from local files...")
             tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, local_files_only=True)
             model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, local_files_only=True)
         else:
-            print("⏳ No model available, start downloading FinBERT, this may take a while...")
+            print("No model available, start downloading FinBERT, this may take a while...")
             tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
             model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME)
             print(f"model {MODEL_NAME} downloaded and loaded successfully!")
@@ -119,7 +113,7 @@ def sentiment_scoring(symbol):
         print(f"From def sentiment_scoring: An error occurred while processing {symbol}: {e}")
 
 
-def pipeline() :
+def sentiment_scorer() :
     load_model()
     for symbol in SYMBOLS:
         try :
@@ -129,5 +123,10 @@ def pipeline() :
         except Exception as e:
              print(f"From def pipline: An error occurred while processing {symbol}: {e}")
              
+if __name__ == "__main__":
+    sentiment_scorer()  
 
-pipeline()
+def auto_pipline_sentiment_scorer(symbol):
+    load_model()
+    sentiment_scoring(symbol)
+    return True

@@ -2,6 +2,7 @@ import pandas as pd
 import re
 import html
 
+
 SYMBOLS = ["AAPL", "CSCO", "INTC", "MSFT", "NVDA", "ORCL"]
 USER_TYPE = "personal" # or "university" 
 TASK = ["read", "write", "check", "sav_sentiment", "read_matching", "write_matching"]
@@ -142,7 +143,7 @@ def encoding_mismatch(symbol):
     except Exception as e:
         print(f"from def Encoding_Mismatch: An error occurred while checking encoding mismatch: {e}")
 
-def pipline():
+def text_processer():
     for symbol in SYMBOLS:
         try :
             fill_null(symbol)
@@ -152,4 +153,13 @@ def pipline():
             print(f"From def pipline: An error occurred while processing {symbol}: {e}")
             line()
 
-pipline()
+
+
+if __name__ == "__main__":
+    text_processer()
+
+def auto_pipline_text_processor(symbol):
+    fill_null(symbol)
+    cleansing_noise_text(symbol)
+    encoding_mismatch(symbol)
+    return True
