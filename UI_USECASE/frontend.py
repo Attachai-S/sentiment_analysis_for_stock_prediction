@@ -24,6 +24,38 @@ def main(page: ft.Page):
                     on_click=lambda e, s=sym: page.run_task(go_check, e, s)
                 )
             )
+        #===== search ui =====
+
+        async def submit_symbol(e):
+            global selected_symbol
+
+            symbol = input_field.value.strip().upper()
+
+            if not symbol:
+                status_msg.value = "Please enter a symbol"
+                page.update()
+                return
+
+            status_msg.value = "Checking..."
+            page.update()
+
+            if not is_valid_symbol(symbol):
+                status_msg.value = "Invalid symbol"
+                page.update()
+                return
+
+            status_msg.value = "Valid"
+            selected_symbol = symbol
+            page.update()
+
+            await page.push_route("/check")
+
+        input_field = ft.TextField(
+                label="Enter stock symbol (e.g. TSLA)",
+                width=300
+            )
+        status_msg = ft.Text("", color=ft.Colors.RED)
+        #===== search ui =====
         page.views.append(
             ft.View(
                 route="/",
@@ -34,14 +66,35 @@ def main(page: ft.Page):
                                 ft.Text("AI Stock Predictor", size=36, weight=ft.FontWeight.BOLD),
                                 ft.Text("Select a Stock", size=24),
                                 ft.Text(""),
-
                                 ft.Container(content=ft.Row(
                                     controls=buttons,
                                     wrap=True,
                                     alignment=ft.MainAxisAlignment.CENTER,
                                     spacing=10,
                                     run_spacing=10,
-                                ),alignment=ft.Alignment.CENTER, padding=20)
+                                ),alignment=ft.Alignment.CENTER, padding=20),
+                                ft.Text(""),
+                                ft.Text("Or Enter Your Stock Symbol", size=24),
+                                # ft.Row([])
+                                ft.Container(
+                                    content=ft.Column(
+                                        [
+                                            ft.Row(
+                                                [
+                                                    input_field,
+                                                    ft.ElevatedButton(
+                                                        "Submit",
+                                                        on_click=lambda e: page.run_task(submit_symbol, e)
+                                                    )
+                                                ],
+                                                alignment=ft.MainAxisAlignment.CENTER
+                                            ),
+                                            status_msg
+                                        ],
+                                        horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                                    ),
+                                    padding=10
+                                )
                             ]
                             ,horizontal_alignment=ft.CrossAxisAlignment.CENTER
                             ,expand=True

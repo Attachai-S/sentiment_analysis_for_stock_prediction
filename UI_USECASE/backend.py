@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from datetime import datetime
 import sys
-import os
+import yfinance as yf
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from news_collection.get_news_data import auto_pipline_get_news_dataset
@@ -69,28 +69,9 @@ def is_data_up_to_date(symbol):
 
     return (
         is_recent(news_date, 1) and
-        is_recent(stock_date, 3) and   # หุ้นให้ยืดหยุ่นหน่อย
+        is_recent(stock_date, 3) and
         is_recent(llm_date, 1)
     )
-    
-# def is_data_up_to_date(symbol):
-
-#     today = datetime.today().date()
-
-#     news_path = f"news_collection/news_dataset/news_{symbol}.csv"
-#     stock_path = f"stock_collection/stock_dataset/stock_{symbol}.csv"
-#     llm_path = f"data_merged/{symbol}_gemini_results.csv"
-
-#     if not os.path.exists(news_path) or not os.path.exists(stock_path) or not os.path.exists(llm_path):
-#         return False
-
-#     news_date = get_latest_date(news_path, "published_at")
-#     stock_date = get_latest_date(stock_path, "Date")
-#     llm_date = get_latest_date(llm_path, "Date")
-
-#     print("DEBUG dates:", news_date, stock_date, llm_date, "today:", today)
-
-#     return news_date == today and stock_date == today and llm_date == today
 
 def run_full_pipeline(symbol):
 
@@ -113,21 +94,18 @@ def run_full_pipeline(symbol):
         auto_pipline_data_merger(symbol)
         run_daily_update(symbol)
 
-    print("✅ Smart pipeline done")
-
-
-# def run_full_pipeline(symbol):
-#     print(f"🚀 Running full pipeline for {symbol}")
-
-#     auto_pipline_get_news_dataset(symbol)
-#     auto_pipline_get_stock_dataset(symbol)
-#     auto_pipline_text_processor(symbol)
-#     auto_pipline_sentiment_scorer(symbol)
-#     auto_pipline_data_merger(symbol)
-#     run_daily_update(symbol)
-
-#     print("✅ Pipeline finished")
+    print("run pipeline done")
 # ===== check page logic =====
+# ===== search ui logic =====
+def is_valid_symbol(symbol):
+    try:
+        ticker = yf.Ticker(symbol)
+        data = ticker.history(period="1d")
+
+        return not data.empty
+    except:
+        return False
+# ===== search ui logic =====
 # ===== results page logic =====
 def load_prediction(symbol):
     path = f"data_merged/{symbol}_gemini_results.csv"
@@ -140,3 +118,4 @@ def load_prediction(symbol):
 
     return df.head(10)
 # ===== results page logic =====
+
