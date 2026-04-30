@@ -5,6 +5,7 @@ import sys
 import yfinance as yf
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+# import fiunctions from other modules
 from news_collection.get_news_data import auto_pipline_get_news_dataset
 from stock_collection.get_stock_data import auto_pipline_get_stock_dataset
 from news_collection.text_processing import auto_pipline_text_processor

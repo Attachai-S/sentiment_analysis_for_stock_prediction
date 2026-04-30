@@ -8,8 +8,8 @@ from datetime import date, timedelta
 load_dotenv()
 API_KEY = os.getenv("FINNHUB_API_KEY") 
 BASE_URL = "https://finnhub.io/api/v1/company-news"
-# SYMBOLS = ["AAPL", "CSCO", "INTC", "MSFT", "NVDA","ORCL"]
-SYMBOLS = ["ATTCH"]
+SYMBOLS = ["AAPL", "CSCO", "INTC", "MSFT", "NVDA","ORCL"]
+# SYMBOLS = ["ATTCH"]
 
 REQUEST_SLEEP = 1.2 # พักทุก request
 SYMBOL_SLEEP = 60 # พักหลังจบ 1 symbol = 1.00 นาที
@@ -112,13 +112,12 @@ def auto_pipline_get_news_dataset(symbol):
         file_path = selected_path(symbol, USER_TYPE)
         
         if os.path.exists(file_path):
-            print(f"✅ [PIPELINE] สำเร็จ! บันทึกไฟล์เรียบร้อย: {file_path}")
+            print(f"[PIPELINE] Finished, save on: {file_path}")
             return True
         else:
-            print(f"⚠️ [PIPELINE] ดึงข้อมูลเสร็จสิ้น แต่ไม่พบไฟล์ (อาจไม่มีข่าวในช่วงเวลานี้)")
-            return False 
+            print(f"[PIPELINE] call data finished but no file found (may have no news in this period)")
+            return False
             
     except Exception as e:
-        # หาก API ล่ม หรือเน็ตหลุด จะถูกจับ Error ตรงนี้ โปรแกรมจะได้ไม่เด้งปิด
-        print(f"❌ [PIPELINE] เกิดข้อผิดพลาดในการดึงข่าว {symbol}: {e}")
+        print(f"[PIPELINE] เกิดข้อผิดพลาดในการดึงข่าว {symbol}: {e}")
         return False

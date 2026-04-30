@@ -1,7 +1,7 @@
 import os
 import time
 import json
-import warnings # เพิ่มไลบรารีสำหรับจัดการข้อความเตือน
+import warnings 
 import pandas as pd 
 from dotenv import load_dotenv
 import google.generativeai as genai
@@ -37,14 +37,13 @@ def selected_path(symbol, user_type, task):
 # 2. ฟังก์ชันส่งข้อมูลให้ Gemini คิดวิเคราะห์
 # ==========================================
 def ask_gemini_to_predict(row_data):
-    # 🎯 แก้ไข Error: int64 is not JSON serializable โดยการแปลง Type (Cast) ให้เป็นของ Python โดยตรง
     context = {
         "Date": str(row_data['Date']),
         "Open": float(row_data['Open']),
         "Close": float(row_data['Close']),
-        "Volume": int(row_data['Volume']),           # <--- แก้ไขตรงนี้
-        "News_Count": int(row_data['news_count']),   # <--- แก้ไขตรงนี้
-        "Net_Sentiment_Score": float(round(row_data['positive_score'] - row_data['negative_score'], 4)) # <--- แก้ไขตรงนี้
+        "Volume": int(row_data['Volume']),           
+        "News_Count": int(row_data['news_count']),   
+        "Net_Sentiment_Score": float(round(row_data['positive_score'] - row_data['negative_score'], 4)) 
     }
     
     context_json = json.dumps(context)
@@ -97,7 +96,7 @@ def start_prediction(symbol):
     i = 0
     while i < len(test_df):
         row = test_df.iloc[i]
-        print(f"[{i+1}/{len(test_df)}] กำลังวิเคราะห์ข้อมูลวันที่ {row['Date']}...", end=" ")
+        print(f"[{i+1}/{len(test_df)}] Analysis {row['Date']}...", end=" ")
         
         try:
             result = ask_gemini_to_predict(row)
@@ -106,15 +105,15 @@ def start_prediction(symbol):
             confidences.append(result['confidence'])
             reasonings.append(result['reasoning'])
             
-            print(f"👉 ทายว่า: {result['prediction'].upper()} (มั่นใจ: {result['confidence']})")
+            print(f"Predicted: {result['prediction'].upper()} (Confidence: {result['confidence']})")
             
             i += 1
             time.sleep(4)
             
         except exceptions.ResourceExhausted:
-            print(f"\n⚠️ ติดลิมิต API (Rate Limit Hit)! ระบบจะหยุดรอ 60 วินาที...")
+            print(f"\n⚠️ Rate Limit Hit, waiting 60 seconds...")
             time.sleep(72)
-            print("🔄 ครบกำหนดพัก 1 นาที กำลังพยายามทำนายแถวเดิมอีกครั้ง...")
+            print("finish waiting, resuming...")
             
     test_df['gemini_prediction'] = predictions
     test_df['gemini_confidence'] = confidences
@@ -123,7 +122,7 @@ def start_prediction(symbol):
     save_path = selected_path(symbol, USERTYPE, "write_result")
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
     test_df.to_csv(save_path, index=False, encoding='utf-8')
-    print(f"\n✅ เสร็จสิ้น! บันทึกผลลัพธ์การทำนายไว้ที่: {save_path}")
+    print(f"\nCompleted, Results saved to: {save_path}")
 
 # ==========================================
 # 2. ฟังก์ชันส่งข้อมูลให้ Gemini ทายพรุ่งนี้ (T+1)
@@ -166,7 +165,7 @@ def predict_tomorrow(row_data):
 # ==========================================
 def run_daily_update(symbol):
     print(f"\n{'='*60}")
-    print(f" 🚀 อัปเดตคำทำนายรายวัน (Daily Prediction): {symbol}")
+    print(f" Update daily prediction: {symbol}")
     print(f"{'='*60}")
     
     merged_path = selected_path(symbol, USERTYPE, "read_final")
@@ -188,18 +187,18 @@ def run_daily_update(symbol):
 
         # เช็คว่าวันนี้เคยทายไปหรือยัง
         if not df_results.empty and latest_date in df_results['Date'].values:
-            print(f"\n⚠️ ข้อมูลวันที่ {latest_date} มีในระบบแล้ว! (ไม่ต้องทายซ้ำ)")
+            print(f"\n⚠️ Data founded {latest_date} in dataset! (No need to predict again for this date)")
             return 
             
-        print(f"\n🔮 กำลังวิเคราะห์ข้อมูลสิ้นสุดวันที่: {latest_date}")
-        print(f"🎯 เป้าหมายการทำนาย (Target Date): {target_date}") # แสดงวันที่ T+1 บนหน้าจอ
+        print(f"\nกำลังวิเคราะห์ข้อมูลสิ้นสุดวันที่: {latest_date}")
+        print(f"เป้าหมายการทำนาย (Target Date): {target_date}") # แสดงวันที่ T+1 บนหน้าจอ
         
         result = ask_gemini_to_predict(latest_row)
         
         if result['prediction'] != 'error':
-            pred_color = "🟢 UP" if result['prediction'].lower() == 'up' else "🔴 DOWN" if result['prediction'].lower() == 'down' else "⚪ STABLE"
-            print(f"   👉 ผลทำนายของวันที่ {target_date} คือ: {pred_color}") # บอกวันที่ในอนาคตชัดเจน
-            print(f"   🧠 เหตุผล: {result['reasoning']}\n")
+            pred_color = "UP" if result['prediction'].lower() == 'up' else "DOWN" if result['prediction'].lower() == 'down' else "⚪ STABLE"
+            print(f"   ผลทำนายของวันที่ {target_date} คือ: {pred_color}") # บอกวันที่ในอนาคตชัดเจน
+            print(f"   เหตุผล: {result['reasoning']}\n")
             
             # บันทึกข้อมูล
             new_row_df = pd.DataFrame([latest_row])
@@ -209,15 +208,15 @@ def run_daily_update(symbol):
             
             df_updated = pd.concat([df_results, new_row_df], ignore_index=True)
             df_updated.to_csv(results_path, index=False, encoding='utf-8')
-            print(f"✅ บันทึกคำทำนาย T+1 ลงใน {results_path} สำเร็จ!")            
+            print(f"บันทึกคำทำนาย T+1 ลงใน {results_path} สำเร็จ!")            
     except Exception as e:
-        print(f"❌ ระบบขัดข้องสำหรับ {symbol}: {e}")
+        print(f"ระบบขัดข้องสำหรับ {symbol}: {e}")
 
 if __name__ == "__main__":
     for symbol in SYMBOLS:
         start_prediction(symbol)
         if symbol != SYMBOLS[-1]:
-            print(f"⏳ สลับหุ้น: รอ {SYMBOL_SLEEP} วินาทีเพื่อป้องกัน Rate Limit รวม...")
+            print(f"สลับหุ้น: รอ {SYMBOL_SLEEP} วินาทีเพื่อป้องกัน Rate Limit รวม...")
             time.sleep(SYMBOL_SLEEP)
 
 if __name__ == "__main__":

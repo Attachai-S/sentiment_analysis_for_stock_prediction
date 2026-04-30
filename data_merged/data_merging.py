@@ -19,8 +19,8 @@ def line(symbol, task=""):
     else: print(f"\n{'=' * 50}\n")
 
 def change_date_format(symbol):
-    _stock = pd.read_csv(selected_path(symbol, USERTYPE, "read_stock")) #readed
-    _sentiment = pd.read_csv(selected_path(symbol, USERTYPE, "read_sentiment")) #readed
+    _stock = pd.read_csv(selected_path(symbol, USERTYPE, "read_stock")) # readed
+    _sentiment = pd.read_csv(selected_path(symbol, USERTYPE, "read_sentiment")) # readed
 
     _stock['Date'] = pd.to_datetime(_stock['Date'], errors='coerce').dt.strftime('%Y-%m-%d')
     _stock = _stock.dropna(subset=['Date'])
